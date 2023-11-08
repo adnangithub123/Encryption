@@ -1,6 +1,7 @@
 import { LightningElement, wire } from 'lwc';
 import fetchData from '@salesforce/apex/EncryptionUtil.processEncryption';
 
+
 export default class CryptoTest extends LightningElement {
     bankRedirectUrl = 'test.salesforce.com';
     tokenId='dkjnaskdn2882992sdx';
@@ -19,6 +20,19 @@ export default class CryptoTest extends LightningElement {
     }
     
     encryptData(){
+        let mapOfEncryptedData = new Map();
+        mapOfEncryptedData.set("bankRedirectUrl", this.bankRedirectUrl);
+        mapOfEncryptedData.set("tokenId", this.tokenId);
+        mapOfEncryptedData.set("bankCode", this.bankCode);
+        mapOfEncryptedData.set("availableBalance", this.availableBalance);
+        mapOfEncryptedData.set("creditSegmentCode", this.creditSegmentCode);
+        mapOfEncryptedData.set("creditSegmentType", this.creditSegmentType);
+        mapOfEncryptedData.set("applicationID", this.applicationID);
+        mapOfEncryptedData.set("companyCode", this.companyCode);
+        mapOfEncryptedData.set("amount", this.amount);
+        mapOfEncryptedData.set("userId", this.userId);
+
+        /*
         this.encryptedDataArray.push(bankRedirectUrl);
         this.encryptedDataArray.push(tokenId);
         this.encryptedDataArray.push(bankCode);
@@ -29,9 +43,10 @@ export default class CryptoTest extends LightningElement {
         this.encryptedDataArray.push(companyCode);
         this.encryptedDataArray.push(amount);
         this.encryptedDataArray.push(userId);
+        */
 
         
-    processEncryption(this.encryptedDataArray)
+      processEncryption(this.mapOfEncryptedData)
       .then((result) => {
         this.contacts = result;
       })
