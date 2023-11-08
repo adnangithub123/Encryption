@@ -1,8 +1,10 @@
-import { LightningElement, wire } from 'lwc';
-import fetchData from '@salesforce/apex/EncryptionUtil.processEncryption';
+import { LightningElement , track } from 'lwc';
+import processEncryption from '@salesforce/apex/EncryptionUtil.processEncryption';
 
 
 export default class CryptoTest extends LightningElement {
+    
+    encryptionKey='';
     bankRedirectUrl = 'test.salesforce.com';
     tokenId='dkjnaskdn2882992sdx';
     bankCode = 'Abl';
@@ -20,37 +22,30 @@ export default class CryptoTest extends LightningElement {
     }
     
     encryptData(){
-        let mapOfEncryptedData = new Map();
-        mapOfEncryptedData.set("bankRedirectUrl", this.bankRedirectUrl);
-        mapOfEncryptedData.set("tokenId", this.tokenId);
-        mapOfEncryptedData.set("bankCode", this.bankCode);
-        mapOfEncryptedData.set("availableBalance", this.availableBalance);
-        mapOfEncryptedData.set("creditSegmentCode", this.creditSegmentCode);
-        mapOfEncryptedData.set("creditSegmentType", this.creditSegmentType);
-        mapOfEncryptedData.set("applicationID", this.applicationID);
-        mapOfEncryptedData.set("companyCode", this.companyCode);
-        mapOfEncryptedData.set("amount", this.amount);
-        mapOfEncryptedData.set("userId", this.userId);
+      const mapOfEncryptedData = new Map([]);
+      mapOfEncryptedData.set('bankRedirectUrl', this.bankRedirectUrl);
+      mapOfEncryptedData.set("tokenId", this.tokenId);
+      mapOfEncryptedData.set("bankCode", this.bankCode);
+      mapOfEncryptedData.set("availableBalance", this.availableBalance);
+      mapOfEncryptedData.set("creditSegmentCode", this.creditSegmentCode);
+      mapOfEncryptedData.set("creditSegmentType", this.creditSegmentType);
+      mapOfEncryptedData.set("applicationID", this.applicationID);
+      mapOfEncryptedData.set("companyCode", this.companyCode);
+      mapOfEncryptedData.set("amount", this.amount);
+      mapOfEncryptedData.set("userId", this.userId);
+      console.log('in the callback  ' + [...mapOfEncryptedData.entries()]);
+      console.log([...mapOfEncryptedData.keys()]);
+      console.log([...mapOfEncryptedData.values()]);
+      //mapOfEncryptedData
 
-        /*
-        this.encryptedDataArray.push(bankRedirectUrl);
-        this.encryptedDataArray.push(tokenId);
-        this.encryptedDataArray.push(bankCode);
-        this.encryptedDataArray.push(availableBalance);
-        this.encryptedDataArray.push(creditSegmentCode);
-        this.encryptedDataArray.push(creditSegmentType);
-        this.encryptedDataArray.push(applicationID);
-        this.encryptedDataArray.push(companyCode);
-        this.encryptedDataArray.push(amount);
-        this.encryptedDataArray.push(userId);
-        */
-
-        
-      processEncryption(this.mapOfEncryptedData)
+      processEncryption({ encryptedDataArray: mapOfEncryptedData }) 
       .then((result) => {
+        this.encryptionKey = JSON.stringify(result);
+        console.log('in success 1 s== '+JSON.stringify(result));
         this.contacts = result;
       })
       .catch((error) => {
+        console.log('in error == '+JSON.stringify(error));
         this.error = error;
       });
     }

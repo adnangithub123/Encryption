@@ -9,15 +9,19 @@ public with sharing class EncryptionUtil {
         mapOfStringwithBlob.put(EncodingUtil.base64Encode(cryptoKey) , cryptoKey);
         return mapOfStringwithBlob;
     }
-    @AuraEnabled
-    public static map<string, string> processEncryption(map<string, string> encryptedDataArray){ 
-       
-        Map<string, string> mapOfKeyAndData = new map<string, string>();
+
+    @AuraEnabled(cacheable=true)
+    public static map<string, string> processEncryption( map<string, string> encryptedDataArray){ 
+        //system.debug('json== '+json);        
+        //map<string, string> encryptedDataArray = (map<string, string>)json;
         
+        Map<string, string> mapOfKeyAndData = new map<string, string>();
+        system.debug('encryptedDataArray == '+encryptedDataArray); 
         map<string, blob> mapOfKeywithBlob = getKey();
         system.debug('cryptoKey -- '+EncodingUtil.base64Encode(cryptoKey));
         mapOfKeyAndData.put('Key', EncodingUtil.base64Encode(cryptoKey));
         for(string s : encryptedDataArray.keyset()){
+          
             //encryptKey.put(recId, EncodingUtil.base64Encode(cryptoKey)); 
             Blob data = Blob.valueOf(encryptedDataArray.get(s)); 
             Blob encryptedData = Crypto.encryptWithManagedIV('AES128', cryptoKey, data ); 
@@ -30,6 +34,7 @@ public with sharing class EncryptionUtil {
         return mapOfKeyAndData; 
     } 
 
+    @AuraEnabled
     public static Map<string, string> processDecryption(Map<string, string> mapOfEncryptedData, String key){ 
 
         String decryptedData; 
